@@ -20,10 +20,12 @@ def menu():
         janela.draw_text('Skins', 280, 550, 100, (255, 255, 0), "Arial", True, True)
         janela.draw_text('Exit', 320, 700, 100, (255, 255, 0), "Arial", True, True)
 
-        if cursor.is_over_area((320,400), (420, 500)) and cursor.is_button_pressed(1):
-            game(janela, teclado)
-        if cursor.is_over_area((280,550), (380, 650)) and cursor.is_button_pressed(1):
+        if cursor.is_over_area((320,400), (550, 500)) and cursor.is_button_pressed(1):
+            game(janela, teclado, menu)
+        if cursor.is_over_area((280,550), (550, 650)) and cursor.is_button_pressed(1):
             skins(janela, teclado, cursor)
+        if cursor.is_over_area((320, 700), (530, 800)) and cursor.is_button_pressed(1):
+            janela.close()
         janela.update()
 
 menu()
