@@ -10,20 +10,47 @@ from win import win
 background = Sprite("Game_images/background.jpg")
 
 
-def game(janela, teclado, menu):
+def game(janela, teclado, menu, skin_pad, skin_ball):
     # temporizadores:
     tempo_total = 0  # tempo total decorrido
     big_time = 6  # tempo que o pad permanece grande
     big_starter = 0  # momento em que o pad fica grande
 
     # criação do pad
-    pad = Sprite("Game_images/pad.png")
+    #para cada skin_pad terá um spad com o documento da skin e o bpad com o documento do big pad
+    if skin_pad == 1:
+        spad = 'Game_images/pad.png'
+        bpad = 'Game_images/big_pad.png'
+    elif skin_pad == 2:
+        spad = 'Game_images/pad2.png'
+        bpad = 'Game_images/bpad2.png'
+    elif skin_pad == 3:
+        spad = 'Game_images/pad3.png'
+        bpad = 'Game_images/bpad3.png'
+    elif skin_pad == 4:
+        spad = 'Game_images/pad4.png'
+        bpad = 'Game_images/bpad4.png'
+    elif skin_pad == 5:
+        spad = 'Game_images/pad5.png'
+        bpad = 'Game_images/bpad5.png'
+    pad = Sprite(spad)
     pad.set_position(janela.width / 2 - pad.width / 2, 900)
     vel_pad = 400  # velocidade do pad
     pad_state = 0  # estado do pad(normal == 0 e grande == 1)
 
     # criação da bola(lá ele)
-    ball = Ball(janela.width / 2, 700, 0, 1)
+    #cada skin_ball terá uma imagem sball skin da bola
+    if skin_ball == 1:
+        sball = 'Game_images/ball.png'
+    elif skin_ball == 2:
+        sball = 'Game_images/ball2.png'
+    elif skin_ball == 3:
+        sball = 'Game_images/ball3.png'
+    elif skin_ball == 4:
+        sball = 'Game_images/ball4.png'
+    elif skin_ball == 5:
+        sball = 'Game_images/ball5.png'
+    ball = Ball(janela.width / 2, 700, 0, 1, sball)
     balls = [ball]  # lista de bolas
 
     # criação dos tijolos
@@ -56,12 +83,12 @@ def game(janela, teclado, menu):
                         if alive_bricks[i][j] != 0 and Collision.collided(bricks[i][j], bola.sprite):
                             # no caso de colisão, irá ser feita a verificação do tipo do tijolo, em seguida o acionamento dos poderes
                             if alive_bricks[i][j] == 2:
-                                explosion(i, j, alive_bricks, pad, tempo_total, big_starter, pad_state, balls)
+                                explosion(i, j, alive_bricks, pad, tempo_total, big_starter, pad_state, balls, sball)
                             elif alive_bricks[i][j] == 3:
-                                pad, pad_state, big_starter = bigger_pad(pad, tempo_total)
+                                pad, pad_state, big_starter = bigger_pad(pad, tempo_total, bpad)
                                 # após o crescimento do pad, seu estado passará a ser 1 e será inicializado o tempo dele
                             elif alive_bricks[i][j] == 4:
-                                more_balls(balls, pad)
+                                more_balls(balls, pad, sball)
                                 # adiciona duas bolinhas ao acertar esse tijolo
                             alive_bricks[i][j] = 0
                             #redirecionamento da bolinha ao acertar o tijolo
@@ -171,27 +198,27 @@ def mov_pad(janela, pad, vel_pad, teclado):
 
 
 # explosão:
-def explosion(i, j, alive_bricks, pad, tempo_total, big_starter, pad_state, balls):
+def explosion(i, j, alive_bricks, pad, tempo_total, big_starter, pad_state, balls, sball):
     # o tijolo de explosão irá destruir todos os tijolos em volta, incluindo outros que possuam poderes
     for t in range(i - 1, i + 2):
         for q in range(j - 1, j + 2):
             if alive_bricks[t][q] == 2:
                 alive_bricks[t][q] = 0
-                explosion(t, q, alive_bricks, pad, tempo_total, big_starter, pad_state, balls)
+                explosion(t, q, alive_bricks, pad, tempo_total, big_starter, pad_state, balls, sball)
             elif alive_bricks[t][q] == 3:
                 pass
                 #pad, pad_state, big_starter = bigger_pad(pad, tempo_total)
                 #return pad, pad_state, big_starter
             elif alive_bricks[t][q] == 4:
-                more_balls(balls, pad)
+                more_balls(balls, pad, sball)
             alive_bricks[t][q] = 0
 
 
 # poder que aumenta o pad
-def bigger_pad(pad, tempo_total):
+def bigger_pad(pad, tempo_total, bpad):
     x = pad.x
     y = pad.y
-    pad = Sprite("Game_images/big_pad.png")
+    pad = Sprite(bpad)
     pad.set_position(x, y)
     pad_state = 1
     big_starter = tempo_total
@@ -199,18 +226,19 @@ def bigger_pad(pad, tempo_total):
 
 
 # poder que adiciona mais bolas, incompleto
-def more_balls(balls, pad):
-    ball1 = Ball(pad.x + 30, pad.y - 30, -1, -1)
+def more_balls(balls, pad, sball):
+    ball1 = Ball(pad.x + 30, pad.y - 30, -1, -1, sball)
     balls.append(ball1)
-    ball2 = Ball(pad.x + pad.width - 30 , pad.y - 30, 1, -1)
+    ball2 = Ball(pad.x + pad.width - 30 , pad.y - 30, 1, -1, sball)
     balls.append(ball2)
 
 
 # classe da bola
 class Ball:
 
-    def __init__(self, x, y, dir_x, dir_y):
-        self.sprite = Sprite("Game_images/ball.png")
+    def __init__(self, x, y, dir_x, dir_y, sball):
+
+        self.sprite = Sprite(sball)
         self.x = x
         self.y = y
         self.sprite.set_position(self.x, self.y)
